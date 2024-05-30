@@ -107,17 +107,19 @@ def train(model, X_train, X_test, y_train, y_test, epochs):
 
 
 def save_weights(best_weights, last_weights, model):
-    path = Path(f'run/train/weights/')
+    path = Path(f'run')
     if not path.exists():
         path.mkdir(parents=True)
-        torch.save(model.load_state_dict(best_weights), os.path.join(path, 'best.pt'))
-        torch.save(model.load_state_dict(last_weights), os.path.join(path, 'last.pt'))
+    count = len(os.listdir('run'))
+    if count == 0:
+        path = Path(f'run/train/weights/')
     else:
-        count = len(os.listdir('run'))
         path = Path(f'run/train{count}/weights/')
-        path.mkdir(parents=True)
-        torch.save(model.load_state_dict(best_weights), os.path.join(path, 'best.pt'))
-        torch.save(model.load_state_dict(last_weights), os.path.join(path, 'last.pt'))
+    path.mkdir(parents=True)
+    model.load_state_dict(best_weights)
+    torch.save(model, os.path.join(path, 'best.pt'))
+    model.load_state_dict(last_weights)
+    torch.save(model, os.path.join(path, 'last.pt'))
 
 
 train(model, X_train=X_train, X_test=X_test, y_train=y_train, y_test=y_test, epochs=epochs)
@@ -130,3 +132,4 @@ plt.plot(test_accuracy_data)
 plt.xlabel('epochs')
 plt.ylabel('test_accuracy')
 plt.show()
+
